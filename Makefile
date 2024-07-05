@@ -6,14 +6,16 @@
 #    By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/11 15:52:46 by ymaaloum          #+#    #+#              #
-#    Updated: 2024/06/11 15:53:48 by ymaaloum         ###   ########.fr        #
+#    Updated: 2024/07/05 02:50:19 by ymaaloum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX				=	g++
-CXXFLAGS		=	-Wall -Wextra -Werror -std=c++98
+# CXXFLAGS		=	-Wall -Wextra -Werror -std=c++98
+CXXFLAGS		=
 NAME			=	ircserv
 SRC				=	main.cpp \
+					server.cpp \
 
 
 
@@ -36,7 +38,7 @@ $(NAME): $(OBJ)
 		@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 		@echo "$(GREEN)$(NAME) : Created ! [^_^]$(RESET)"
 
-obj/%.o: %.cpp 
+obj/%.o: %.cpp server.hpp
 		$(CXX) $(CXXFLAGS) -c  $< -o $@
 
 clean:
