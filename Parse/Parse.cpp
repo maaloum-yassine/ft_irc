@@ -1,31 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/11 15:54:02 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:32:33 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/07/05 04:09:12 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 04:38:51 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Parse.hpp"
 
-int main (int ac , char **av)
+Parse ::Parse(){};
+
+void	Parse :: ParsePort(const std :: string port)
 {
-
-
-	try
-	{
-		if (ac != 3)
-			throw std::runtime_error("The prog take two arguments port password [^_^]");
-		server Server_Irc((std :: string(av[1])),(std :: string(av[2])) );
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-		return (1);
-	}
-	return (0);
+	if (!CheckDigit(port) || std :: atoi(port.c_str()) > 65535 )
+		throw std :: string ("ERREUR FOR PORT !");
 }
+Parse :: ~Parse()
+{
+}
+

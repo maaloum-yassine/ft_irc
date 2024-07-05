@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Parse.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/11 15:54:02 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:32:33 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/07/05 03:02:14 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 04:41:33 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#ifndef _PARSE_HPP
+# define _PARSE_HPP
 
-int main (int ac , char **av)
+#include "../function_utils/Func_Utils.hpp"
+
+class Parse
 {
+	public :
+		Parse();
+		void	ParsePort(std :: string);
+		~Parse();
+};
 
 
-	try
-	{
-		if (ac != 3)
-			throw std::runtime_error("The prog take two arguments port password [^_^]");
-		server Server_Irc((std :: string(av[1])),(std :: string(av[2])) );
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-		return (1);
-	}
-	return (0);
-}
+
+#endif
