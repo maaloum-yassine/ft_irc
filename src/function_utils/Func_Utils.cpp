@@ -6,11 +6,11 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:07:18 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:40:24 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/07/05 05:17:53 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Func_Utils.hpp"
+#include "../../include/Func_Utils.hpp"
 
 std :: string trim (const std :: string &str)
 {

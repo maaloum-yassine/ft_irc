@@ -1,21 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Func_Utils.hpp                                     :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:39:36 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/06/11 15:54:02 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 05:19:25 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _FUNC_UTILS_HPP
-#define _FUNC_UTILS_HPP
+#include "../include/server.hpp"
 
-#include <iostream>
+int main (int ac , char **av)
+{
 
-std :: string trim (const std :: string &);
-bool	CheckDigit(const std:: string &);
-
-#endif
+	try
+	{
+		if (ac != 3)
+			throw std::runtime_error("The prog take two arguments port password [^_^]");
+		server Server_Irc((std :: string(av[1])),(std :: string(av[2])) );
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		return (1);
+	}
+	return (0);
+}

@@ -1,33 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:35:29 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 05:18:55 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#ifndef _SERVER_HPP
+#define _SERVER_HPP
 
-server::server(const std:: string& port, const std:: string& password):_port(port),_password(password)
-{
-	try
-	{
-		this->_parse.ParsePort(trim(_port));
-	}
-	catch(const std::string& err)
-	{
-		std :: cerr << err << std :: endl;
-		exit (EXIT_FAILURE);
-	}
-}
+#include "Parse.hpp"
 
-
-
-server :: ~server()
+class server
 {
 
-}
+	Parse					 _parse;
+	const std :: string 	_port;
+	const std :: string 	_password;
+
+	public :
+		server(const std::string &,const std::string &);
+		~server();
+};
+
+
+
+#endif

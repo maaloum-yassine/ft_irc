@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parse.hpp                                          :+:      :+:    :+:   */
+/*   Func_Utils.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 03:02:14 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:41:33 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 04:52:52 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _PARSE_HPP
-# define _PARSE_HPP
+#ifndef _FUNC_UTILS_HPP
+#define _FUNC_UTILS_HPP
 
-#include "../function_utils/Func_Utils.hpp"
+#include <iostream>
+#include <cstdlib>
 
-class Parse
-{
-	public :
-		Parse();
-		void	ParsePort(std :: string);
-		~Parse();
-};
-
-
+std :: string trim (const std :: string &);
+bool	CheckDigit(const std:: string &);
 
 #endif

@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parse.cpp                                          :+:      :+:    :+:   */
+/*   Parse.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/05 04:09:12 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 04:38:51 by ymaaloum         ###   ########.fr       */
+/*   Created: 2024/07/05 03:02:14 by ymaaloum          #+#    #+#             */
+/*   Updated: 2024/07/05 05:18:46 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parse.hpp"
+#ifndef _PARSE_HPP
+# define _PARSE_HPP
 
-Parse ::Parse(){};
+#include "Func_Utils.hpp"
 
-void	Parse :: ParsePort(const std :: string port)
+class Parse
 {
-	if (!CheckDigit(port) || std :: atoi(port.c_str()) > 65535 )
-		throw std :: string ("ERREUR FOR PORT !");
-}
-Parse :: ~Parse()
-{
-}
+	public :
+		Parse();
+		void	ParsePort(const std :: string&);
+		~Parse();
+};
 
+
+
+#endif
