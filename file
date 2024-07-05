@@ -1,0 +1,14 @@
+Option SO_REUSEADDR en détail
+L'option SO_REUSEADDR est une option de socket qui permet à plusieurs sockets TCP (ou UDP) sur un même système d'exploitation d'utiliser la même adresse locale sous certaines conditions. Voici les points clés à retenir :
+
+Réutilisation rapide d'une adresse locale :
+
+Lorsqu'un socket se ferme, l'adresse et le port utilisés par ce socket restent réservés (ou liés) pendant un certain temps (habituellement quelques minutes) avant d'être réutilisables par un nouveau socket.
+L'option SO_REUSEADDR permet de contourner cette restriction, en permettant à un nouveau socket d'utiliser immédiatement la même adresse locale que le socket précédent qui vient de se fermer.
+Utilisation appropriée :
+
+SO_REUSEADDR est souvent utilisé dans des applications serveur qui doivent redémarrer rapidement après une interruption, ou qui doivent lier plusieurs sockets à la même adresse et au même port (par exemple, dans des applications de serveur multi-thread ou multi-processus).
+Conditions d'utilisation :
+
+Cette option peut être définie avant d'appeler bind() sur un socket TCP ou UDP.
+Elle ne doit être activée que lorsque vous êtes certain que plusieurs sockets sur le même système d'exploitation peuvent écouter la même adresse IP et le même port simultanément.

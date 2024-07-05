@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/07/05 05:18:02 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/07/05 06:17:53 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 	try
 	{
 		this->_parse.ParsePort(trim(_port));
+		this->start_server();
+
 	}
 	catch(const std::string& err)
 	{
@@ -26,6 +28,13 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 }
 
 
+	void server :: 	start_server()
+	{
+		_serv_socket = socket(AF_INET, SOCK_STREAM, 0);
+		if (_serv_socket == -1)
+			throw std :: string ("ERROR CREATING SOCKET!");
+
+	}
 
 server :: ~server()
 {
