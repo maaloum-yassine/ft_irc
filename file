@@ -12,3 +12,4 @@ Conditions d'utilisation :
 
 Cette option peut être définie avant d'appeler bind() sur un socket TCP ou UDP.
 Elle ne doit être activée que lorsque vous êtes certain que plusieurs sockets sur le même système d'exploitation peuvent écouter la même adresse IP et le même port simultanément.
+https://irc.dalexhd.dev/
