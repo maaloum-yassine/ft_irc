@@ -6,13 +6,14 @@
 #    By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/11 15:52:46 by ymaaloum          #+#    #+#              #
-#    Updated: 2024/07/15 08:55:06 by ymaaloum         ###   ########.fr        #
+#    Updated: 2024/08/10 23:36:56 by ymaaloum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CXX			= g++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
-NAME		= ircserv
+CXX			=	g++
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
+
+NAME		= 	ircserv
 
 SRC			=	src/main.cpp \
 				src/network/server.cpp \
