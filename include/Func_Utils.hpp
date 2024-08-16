@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/14 22:40:59 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/08/15 20:42:25 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <cstring>  // Pour strerror
 #include <arpa/inet.h> // Pour inet_ntoa
 #include <vector>
+#include <map>
 #include <poll.h>
 #include <string>
 

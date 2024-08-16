@@ -1,21 +1,20 @@
-#include	<unistd.h>
-#include	<stdio.h>
-#include 	<poll.h>
-#include 	<string>
+#include <iostream>
+#include <cstring>
 
+int main() {
+    char *haystack = "Hello, \npWorld!";
+    const char *needle = "\n";
 
+    char *result = strstr(haystack, needle);
 
-int main ()
-{
+    if (result != NULL) {
+        std::cout << "Found: " << result << std::endl;  // Affiche: Found: World!
+    } else {
+        std::cout << "Not found!" << std::endl;
+    }
 
-	char name[255];
-
-	write(1,"enter name :",12);
-	read(0,name,sizeof(name));
-
-	printf("hello  ==> %s ", name);
-
-
-
-	return (0);
+    return 0;
 }
+hjfkjsdh\nfskjdhfksdjfh
+fsdkfjsdkljflsdkjflks
+f;kljsdlkfjslkdfjlsdjfl
