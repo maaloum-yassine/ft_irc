@@ -6,12 +6,14 @@
 #    By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/11 15:52:46 by ymaaloum          #+#    #+#              #
-#    Updated: 2024/08/15 20:35:55 by ymaaloum         ###   ########.fr        #
+#    Updated: 2024/08/17 22:25:17 by ymaaloum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX			=	g++
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
+CXXFLAGS	=
+
+# -Wall -Wextra -Werror -std=c++98
 
 NAME		= 	ircserv
 

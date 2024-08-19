@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/16 22:21:24 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/08/19 02:31:44 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class server
 		void	create_socket();
 		void	handle_cnx_client();
 		void	disconnection_client(int);
-		void	handle_msg_client(int);
+		void	handle_msg_client(size_t &);
 };
 
 

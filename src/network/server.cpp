@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/16 23:35:27 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/08/19 02:43:54 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		std::cerr << strerror(errno) << std::endl;
 		if (exit)
 			throw std :: string (err);
+		else
+			std::cerr << err << std::endl;
 	}
 
 	void	server :: create_socket()
@@ -61,7 +63,6 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		int						client_fd;
 		socklen_t				client_len = sizeof(client_addr);
 
-
 		if ((client_fd = accept(this->_serv_socket_fd, (struct sockaddr*)&client_addr, &client_len)) == -1)
 		{
 			display_err("ERROR ACCEPT !!", 0);
@@ -78,7 +79,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		this->_fds.push_back(client_pollfd);
 		std::string clientIp = inet_ntoa(client_addr.sin_addr);
 		this->_client[client_fd] = new client(client_fd, clientIp, clientIp);
-		std::cout << "New connection from " << clientIp << std::endl;
+		std::cout << "New connection from " << clientIp << "fd is -> "<< client_fd << std::endl;
 	}
 
 	void server :: 	start_server()
@@ -91,64 +92,102 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		std::cout << "Server started on 0.0.0.0 : " << this->_port << std::endl;
 		while (1)
 		{
-			if (!poll(this->_fds.data(), this->_fds.size(), -1))
+			if (poll(this->_fds.data(), this->_fds.size(), -1) < 0)
 				display_err("ERROR POLL !!", 1);
-			else if (this->_fds[0].events & POLLIN)
+			else if (this->_fds[0].revents & POLLIN)
 				handle_cnx_client();
-			for (pllfd_itertr it = this->_fds.begin(); it != this->_fds.end(); ++it)
+			for (size_t i = 1; i < _fds.size(); ++i)
 			{
-				if (it->revents == 0)
-					continue;
-				if (it->revents & (POLLERR | POLLHUP))
-					this->disconnection_client(it->fd);
-				else if (it->revents & POLLIN)
-					this->handle_msg_client(it->fd);
-
-			}
-		}
-	}
-
-
-	void server :: 	disconnection_client(int fd)
-	{
-		client* __client = NULL;
-
-		__client = this->_client.at(fd);
-		this->_client.erase(fd);
-		if (__client)
-		{
-			for (pllfd_itertr it = this->_fds.begin(); it != this->_fds.end(); ++it)
-			{
-				if (it->fd == fd)
+				if (_fds[i].revents & POLLIN)
 				{
-					this->_fds.erase(it);
-					close(fd);
+					this->handle_msg_client(i);
 					break ;
 				}
 			}
-			std :: cout << "Client --> " << __client->get_hostname() << " is desconnected" << std :: endl;
-			delete __client;
 		}
 	}
 
-	void server :: handle_msg_client(int fd)
+
+
+	void	server :: handle_msg_client(size_t& index)
 	{
 
 		std :: string msg_env;
-		char	buffer[1337];
+		char	buffer[4096];
 		int		byt_rd;
 
-		// client*	client = this->_client.at(fd);
-		if ((byt_rd = recv(fd, buffer, 100, 0) < 0))
+		client*	client = this->_client.at(_fds[index].fd);
+		byt_rd = recv(_fds[index].fd, buffer, sizeof(buffer), 0);
+		switch (byt_rd)
 		{
-			display_err("ERROR FOR READ MSG CLIENT !!", 0);
-			return ;
+			case -1:
+				display_err(" ERROR RECEIVING DATA FROM CLIENT", 0);
+				return ;
+			case 0 :
+				std::cout << "Client disconnected. Socket: " << this->_fds[index].fd << std::endl;
+				close(this->_fds[index].fd);
+				std::swap(this->_fds[index], this->_fds.back());
+				this->_fds.pop_back();
+				--index;
+				return ;
+			default:
+				buffer[byt_rd] = '\0';
+				msg_env = std::string(buffer, byt_rd);
+				std :: cout << "messgae is" << msg_env << std :: endl;
 		}
-		buffer[byt_rd] = '\0';
-		msg_env = std::string(buffer, byt_rd);
-		std :: cout << "messgae is" << msg_env << std :: endl;
 	}
 	server :: ~server()
 	{
 
 	}
+
+	// void server :: 	disconnection_client(int fd)
+	// {
+	// 	client* __client = NULL;
+
+	// 	__client = this->_client.at(fd);
+	// 	this->_client.erase(fd);
+	// 	if (__client)
+	// 	{
+	// 		for (pllfd_itertr it = this->_fds.begin(); it != this->_fds.end(); ++it)
+	// 		{
+	// 			if (it->fd == fd)
+	// 			{
+	// 				this->_fds.erase(it);
+	// 				close(fd);
+	// 				break ;
+	// 			}
+	// 		}
+	// 		std :: cout << "Client --> " << __client->get_hostname() << " is desconnected" << std :: endl;
+	// 		delete __client;
+	// 	}
+	// }
+
+
+
+
+
+
+
+// 	if (_fds[i].revents & POLLIN)
+			// {
+			// 		if (!this->handle_msg_client(_fds[i].fd))
+			// 		{
+			// 			std::cout << "Client disconnected. Socket: " << std::endl;
+			// 			close(_fds[i].fd);
+			// 			// exit (EXIT_FAILURE);
+			// 			// it = this->_fds.erase(it);
+			// 		}
+                    // char buffer[1024];
+                    // int recvResult = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
+                    // if (recvResult < 0)
+                    //     std::cerr << "Error receiving data from client" << std::endl;
+                    // else if (recvResult == 0)
+                    // {
+                    //     std::cout << "Client disconnected. Socket: " << _fds[i].fd << std::endl;
+                    //     close(_fds[i].fd);
+                    //     std::swap(_fds[i], _fds.back());
+                    //     _fds.pop_back();
+                    //     i--;
+                    // }
+			// 	}

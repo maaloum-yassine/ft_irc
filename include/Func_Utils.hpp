@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/15 20:42:25 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/08/19 01:58:42 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #include <map>
 #include <poll.h>
 #include <string>
-
+#include <algorithm>
 
 std :: string trim (const std :: string &);
 bool	CheckDigit(const std:: string &);
