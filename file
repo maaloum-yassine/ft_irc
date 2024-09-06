@@ -217,3 +217,25 @@ configure la socket pour permettre la réutilisation d'adresses locales, ce qui 
 			IPPROTO_TCP --> pour le tcp ( AF_INET + SOCK_STREAM = IPPROTO_TCP )
 			IPPROTO_UDP -->  pour le udp ( AF_INET + SOCK_DGRAM = IPPROTO_UDP )
 		*/
+// void server :: 	disconnection_client(int fd)
+	// {
+	// 	client* __client = NULL;
+
+	// 	__client = this->_client.at(fd);
+	// 	this->_client.erase(fd);
+	// 	if (__client)
+	// 	{
+	// 		for (pllfd_itertr it = this->_fds.begin(); it != this->_fds.end(); ++it)
+	// 		{
+	// 			if (it->fd == fd)
+	// 			{
+	// 				this->_fds.erase(it);
+	// 				close(fd);
+	// 				break ;
+	// 			}
+	// 		}
+	// 		std :: cout << "Client --> " << __client->get_hostname() << " is desconnected" << std :: endl;
+	// 		delete __client;
+	// 	}
+	// }
+// https://www.youtube.com/watch?v=CHNxGKs26qQ

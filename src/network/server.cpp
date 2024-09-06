@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/19 02:43:54 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/07 00:29:41 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,9 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		client_pollfd.events = POLLIN | POLLERR | POLLHUP;
 		this->_fds.push_back(client_pollfd);
 		std::string clientIp = inet_ntoa(client_addr.sin_addr);
-		this->_client[client_fd] = new client(client_fd, clientIp, clientIp);
+		std::map<int, client*>::iterator it = this->_client.find(client_fd);
+		if (it == this->_client.end())
+			this->_client[client_fd] = new client(client_fd, clientIp, clientIp);
 		std::cout << "New connection from " << clientIp << "fd is -> "<< client_fd << std::endl;
 	}
 
@@ -90,7 +92,8 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		server_pollfd.events = POLLIN | POLLERR | POLLHUP; // events to monitor: POLLIN: there's data to read, POLLERR: there's an error, POLLHUP: the client disconnected
 		this->_fds.push_back(server_pollfd);
 		std::cout << "Server started on 0.0.0.0 : " << this->_port << std::endl;
-		while (1)
+		int i =-1;
+		while (++i < 5)
 		{
 			if (poll(this->_fds.data(), this->_fds.size(), -1) < 0)
 				display_err("ERROR POLL !!", 1);
@@ -106,8 +109,6 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 			}
 		}
 	}
-
-
 
 	void	server :: handle_msg_client(size_t& index)
 	{
@@ -126,68 +127,20 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 			case 0 :
 				std::cout << "Client disconnected. Socket: " << this->_fds[index].fd << std::endl;
 				close(this->_fds[index].fd);
-				std::swap(this->_fds[index], this->_fds.back());
+				std::swap(this->_fds[index--], this->_fds.back());
 				this->_fds.pop_back();
-				--index;
 				return ;
 			default:
 				buffer[byt_rd] = '\0';
 				msg_env = std::string(buffer, byt_rd);
 				std :: cout << "messgae is" << msg_env << std :: endl;
 		}
+		
 	}
 	server :: ~server()
 	{
-
+		for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)
+			delete it->second;
+		this->_client.clear();
 	}
 
-	// void server :: 	disconnection_client(int fd)
-	// {
-	// 	client* __client = NULL;
-
-	// 	__client = this->_client.at(fd);
-	// 	this->_client.erase(fd);
-	// 	if (__client)
-	// 	{
-	// 		for (pllfd_itertr it = this->_fds.begin(); it != this->_fds.end(); ++it)
-	// 		{
-	// 			if (it->fd == fd)
-	// 			{
-	// 				this->_fds.erase(it);
-	// 				close(fd);
-	// 				break ;
-	// 			}
-	// 		}
-	// 		std :: cout << "Client --> " << __client->get_hostname() << " is desconnected" << std :: endl;
-	// 		delete __client;
-	// 	}
-	// }
-
-
-
-
-
-
-
-// 	if (_fds[i].revents & POLLIN)
-			// {
-			// 		if (!this->handle_msg_client(_fds[i].fd))
-			// 		{
-			// 			std::cout << "Client disconnected. Socket: " << std::endl;
-			// 			close(_fds[i].fd);
-			// 			// exit (EXIT_FAILURE);
-			// 			// it = this->_fds.erase(it);
-			// 		}
-                    // char buffer[1024];
-                    // int recvResult = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
-                    // if (recvResult < 0)
-                    //     std::cerr << "Error receiving data from client" << std::endl;
-                    // else if (recvResult == 0)
-                    // {
-                    //     std::cout << "Client disconnected. Socket: " << _fds[i].fd << std::endl;
-                    //     close(_fds[i].fd);
-                    //     std::swap(_fds[i], _fds.back());
-                    //     _fds.pop_back();
-                    //     i--;
-                    // }
-			// 	}
