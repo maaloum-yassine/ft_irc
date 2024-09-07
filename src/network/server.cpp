@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/07 00:29:41 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/07 02:31:48 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		server_pollfd.events = POLLIN | POLLERR | POLLHUP; // events to monitor: POLLIN: there's data to read, POLLERR: there's an error, POLLHUP: the client disconnected
 		this->_fds.push_back(server_pollfd);
 		std::cout << "Server started on 0.0.0.0 : " << this->_port << std::endl;
-		int i =-1;
-		while (++i < 5)
+		while (1)
 		{
 			if (poll(this->_fds.data(), this->_fds.size(), -1) < 0)
 				display_err("ERROR POLL !!", 1);
@@ -135,7 +134,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 				msg_env = std::string(buffer, byt_rd);
 				std :: cout << "messgae is" << msg_env << std :: endl;
 		}
-		
+
 	}
 	server :: ~server()
 	{
