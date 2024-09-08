@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/07 02:31:48 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 05:12:18 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,16 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 			default:
 				buffer[byt_rd] = '\0';
 				msg_env = std::string(buffer, byt_rd);
-				std :: cout << "messgae is" << msg_env << std :: endl;
+				// std :: cout << "messgae is" << msg_env << std :: endl;
 		}
-
+		if (endOfCommand(msg_env))
+		{
+			std::vector<std::string> vt = splitByCR(msg_env);
+			int j = -1;
+			while(++j < vt.size())
+				std::cout << vt[j] << std::endl;
+			this->commandApply(this->_fds[index].fd, vt, this->_password);
+		}
 	}
 	server :: ~server()
 	{

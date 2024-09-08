@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/19 01:58:42 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 05:07:47 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,14 @@
 #include <map>
 #include <poll.h>
 #include <string>
+#include <sstream>
 #include <algorithm>
 
-std :: string trim (const std :: string &);
-bool	CheckDigit(const std:: string &);
+std :: string 				trim (const std :: string &);
+bool						CheckDigit(const std:: string &);
+bool						endOfCommand(const	std::string &);
+std::vector<std::string> 	splitByCR(const std::string&);
+int							checkCommand(std::string&);
+std::string 				converUpper(std::string );
 
 #endif
