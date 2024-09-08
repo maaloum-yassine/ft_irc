@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 05:07:47 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 22:23:44 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,5 @@ bool						endOfCommand(const	std::string &);
 std::vector<std::string> 	splitByCR(const std::string&);
 int							checkCommand(std::string&);
 std::string 				converUpper(std::string );
-
+std::vector<std::string>	splitBySpaces(const std::string &);
 #endif

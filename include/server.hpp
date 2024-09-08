@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 05:15:12 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 23:43:16 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ class server
 		void	disconnection_client(int);
 		void	handle_msg_client(size_t &);
 		void	commandApply(int , std::vector<std::string>&,const std::string&);
+		void	execute_cmd(int ,const std :: vector<std::string>& , int);
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:07:18 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 05:07:12 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 23:37:04 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ std::string converUpper(std::string str)
 	return str;
 }
 
-int checkCommand(std::string& comande)
+int	checkCommand(std::string& comande)
 {
 	std::string command;
 
@@ -108,4 +108,15 @@ int checkCommand(std::string& comande)
 	else if(command == "PART")
 		return (10);
 	return (0);
+}
+
+
+std::vector<std::string> splitBySpaces(const std::string &str)
+{
+	std::vector<std::string> result;
+	std::istringstream iss(str);
+	std::string word;
+	while (iss >> word)
+		result.push_back(word);
+	return result;
 }

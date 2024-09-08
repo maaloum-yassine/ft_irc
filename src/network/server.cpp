@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 05:12:18 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/08 23:54:17 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,54 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 			this->commandApply(this->_fds[index].fd, vt, this->_password);
 		}
 	}
+
+
+
+	void	check_password(const client& _client , const std::string & pass)
+	{
+
+	}
+
+	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd)
+	{
+		switch (index_cmd)
+		{
+			case 1:
+			if (split_cmd.size() > 1)
+			{
+				check_password(*(this->_client[fd]), split_cmd[1]);
+			}
+				break;
+		default:
+			break;
+		}
+	}
+
+	void server::commandApply(int fd,  std::vector<std::string>& commandLine, const std::string& password)
+	{
+		int	i;
+
+		i = -1;
+		while (++i < commandLine.size())
+		{
+			std::vector<std::string>firstSplit = splitBySpaces(commandLine[i]);
+			for (std::vector<std::string>::iterator it = firstSplit.begin(); it !=  firstSplit.end(); ++it)
+				execute_cmd(fd, firstSplit ,checkCommand(firstSplit[0]));
+		}
+	}
+
+
+	void printf_message(std::string& msg, int fd)
+	{
+		std::string response = msg;
+		int sendResult = send(fd, response.c_str(), response.length(), 0);
+		if (sendResult < 0)
+			std::cerr << "Error sending response to client: " << strerror(errno) << std::endl;
+		else if (sendResult == 0)
+			std::cerr << "Client disconnected unexpectedly" << std::endl;
+	}
+
+
 	server :: ~server()
 	{
 		for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)
