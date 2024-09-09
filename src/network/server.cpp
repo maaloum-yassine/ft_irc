@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/09 08:52:04 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 22:03:20 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,10 +211,27 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 
 	/*********************************************************************************/
 
-	// void	join(client _client, int fd)
-	// {
+	void	join(client _client, const std :: vector<std::string>& split_cmd ,const std::string & commandLine, int fd)
+	{
+		if (_client._connected)
+		{
+			std::cout << _client._nickname << std::endl;
+			std::vector<std::string>messagesSplit = split(commandLine, ':');
+			if (split_cmd[1][0]== '#' || split_cmd[1][0]== '&')
+			{
+				if (availableChannel(split_cmd[1]))
+				{
 
-	// }
+				}
+
+			}
+		}
+	}
+
+
+	/*********************************************************************************/
+
+
 	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd, const std::string & commandLine)
 	{
 		switch (index_cmd)
@@ -236,7 +253,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 					prive_msg(*(this->_client[fd]), commandLine ,fd);
 					break ;
 			case 4 :
-					// join(*(this->_client[fd]), fd);
+					join(*(this->_client[fd]), split_cmd, commandLine, fd);
 					break ;
 			default:
 					break;
@@ -278,7 +295,30 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		}
 	}
 /**************************************************/
-	server :: ~server()
+
+bool server::availableChannel(const std::string & name)
+{
+	unsigned	int i;
+	std::map<int, client*>::iterator it;
+
+	it  = this->_client.begin();
+	while (it != _client.end())
+	{
+		i = 0;
+		while (i < it->second->channel.size())
+		{
+			if(it->second->channel[i++].name == name)
+				return (1);
+		}
+		it++;
+	}
+	return (0);
+}
+
+
+
+/*****************************************************/
+server :: ~server()
 	{
 		for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)
 			delete it->second;

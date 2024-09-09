@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/09 08:37:08 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 22:00:43 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,9 @@ class server
 		void	execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
 		bool	alreadyUsedNickname(const std::string& );
 		void	brodcast(const std::string &, const std::string &, int fd);
+		bool	availableChannel(const std::string &);
+
 };
 
 #endif
+
