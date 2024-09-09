@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 23:43:16 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 08:37:08 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,10 @@ class server
 		void	handle_cnx_client();
 		void	disconnection_client(int);
 		void	handle_msg_client(size_t &);
-		void	commandApply(int , std::vector<std::string>&,const std::string&);
-		void	execute_cmd(int ,const std :: vector<std::string>& , int);
-
+		void	commandApply(int , std::vector<std::string>&);
+		void	execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
+		bool	alreadyUsedNickname(const std::string& );
+		void	brodcast(const std::string &, const std::string &, int fd);
 };
 
 #endif

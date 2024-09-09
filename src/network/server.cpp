@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 23:54:17 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 08:52:04 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		std::string clientIp = inet_ntoa(client_addr.sin_addr);
 		std::map<int, client*>::iterator it = this->_client.find(client_fd);
 		if (it == this->_client.end())
-			this->_client[client_fd] = new client(client_fd, clientIp, clientIp);
+			this->_client[client_fd] = new client(client_fd, clientIp);
 		std::cout << "New connection from " << clientIp << "fd is -> "<< client_fd << std::endl;
 	}
 
@@ -116,7 +116,6 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		char	buffer[4096];
 		int		byt_rd;
 
-		client*	client = this->_client.at(_fds[index].fd);
 		byt_rd = recv(_fds[index].fd, buffer, sizeof(buffer), 0);
 		switch (byt_rd)
 		{
@@ -137,60 +136,148 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		if (endOfCommand(msg_env))
 		{
 			std::vector<std::string> vt = splitByCR(msg_env);
-			int j = -1;
-			while(++j < vt.size())
-				std::cout << vt[j] << std::endl;
-			this->commandApply(this->_fds[index].fd, vt, this->_password);
+			size_t j = 0;
+			while(j < vt.size())
+				std::cout << vt[j++] << std::endl;
+			this->commandApply(this->_fds[index].fd, vt);
 		}
 	}
 
 
-
-	void	check_password(const client& _client , const std::string & pass)
+	/********************************************************************************/
+	void	check_password(client _client ,const std::string & pass, const std::string& pass_serv, int fd)
 	{
+		if (pass == pass_serv)
+		{
+			printf_message("Correct password\n\r", fd);
+			_client._passB = 1;
+			std::cout << "passb" << _client._passB << std::endl;
+			std::cout << "nicknameb" << _client._nicknameB<< std::endl;
+			std::cout << "usernameB" << _client._usernameB<< std::endl;
+			if(_client._passB && _client._nicknameB && _client._usernameB)
+			{
+				std::string msg = ":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n";
+				printf_message(msg, fd);
+			}
+		}
+		else
+			printf_message("Wrong password\n", fd);
+	}
+	/********************************************************************************/
+
+	bool	server::alreadyUsedNickname(const std::string& nickname)
+	{
+		std::map<int, client*>::iterator it  = this->_client.begin();
+		while(it != _client.end())
+		{
+			if(it->second->_nickname == nickname)
+				return (1);
+			++it;
+		}
+		return (0);
+	}
+
+	void	nick(client _client ,const std::string & _nicknm, int fd)
+	{
+		_client.addNickname(_nicknm);
+		printf_message(RPL_NICK_SET(_client._ipclient, _nicknm), fd);
+		_client._nicknameB = 1;
+		if(_client._passB && _client._nicknameB && _client._usernameB)
+			printf_message( ":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n", fd);
+	}
+	/********************************************************************************/
+
+
+	void	prive_msg(client _client, const std:: string& commandLine,int fd)
+	{
+
+		bool	tr;
+
+		tr = 0;
+		std::vector<std::string>username = split(commandLine, ':');
+		if(count_words(commandLine, tr) == 5 && tr)
+		{
+			std::cout << username[1] << std::endl;
+			_client.addUser(username[1]);
+			_client._usernameB = 1;
+			if(_client._passB && _client._nicknameB && _client._usernameB)
+				printf_message(":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n", fd);
+		}
+		else
+			printf_message("You need more or less parameters \r\n", fd);
 
 	}
 
-	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd)
+
+	/*********************************************************************************/
+
+	// void	join(client _client, int fd)
+	// {
+
+	// }
+	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd, const std::string & commandLine)
 	{
 		switch (index_cmd)
 		{
 			case 1:
-			if (split_cmd.size() > 1)
-			{
-				check_password(*(this->_client[fd]), split_cmd[1]);
-			}
+				if (split_cmd.size() > 1)
+					check_password(*(this->_client[fd]), split_cmd[1], this->_password, fd);
 				break;
-		default:
-			break;
+			case 2:
+				if (!alreadyUsedNickname(split_cmd[1]))
+					nick(*(this->_client[fd]), split_cmd[1], fd);
+				else
+				{
+					this->_client[fd]->_duplicateNickname = 1;
+					printf_message("Error :Duplicated nickname \n\r", fd);
+				}
+				break;
+			case 3 :
+					prive_msg(*(this->_client[fd]), commandLine ,fd);
+					break ;
+			case 4 :
+					// join(*(this->_client[fd]), fd);
+					break ;
+			default:
+					break;
 		}
 	}
 
-	void server::commandApply(int fd,  std::vector<std::string>& commandLine, const std::string& password)
+	void server::commandApply(int fd,  std::vector<std::string>& commandLine)
 	{
-		int	i;
+		size_t	i;
 
 		i = -1;
 		while (++i < commandLine.size())
 		{
 			std::vector<std::string>firstSplit = splitBySpaces(commandLine[i]);
 			for (std::vector<std::string>::iterator it = firstSplit.begin(); it !=  firstSplit.end(); ++it)
-				execute_cmd(fd, firstSplit ,checkCommand(firstSplit[0]));
+				execute_cmd(fd, firstSplit ,checkCommand(firstSplit[0]), commandLine[i]);
 		}
 	}
 
 
-	void printf_message(std::string& msg, int fd)
+
+
+	/****************************************************/
+	void server::brodcast(const std::string& msg,const std::string& channel, int fd)
 	{
-		std::string response = msg;
-		int sendResult = send(fd, response.c_str(), response.length(), 0);
-		if (sendResult < 0)
-			std::cerr << "Error sending response to client: " << strerror(errno) << std::endl;
-		else if (sendResult == 0)
-			std::cerr << "Client disconnected unexpectedly" << std::endl;
+		unsigned int	i;
+
+		std::map<int, client*>::iterator it = this->_client.begin();
+		while(it != this->_client.end())
+		{
+			i = 0;
+			while(i < it->second->channel.size())
+			{
+				if(it->second->channel[i].name == channel && fd != it->first)
+					printf_message(PRIVMSG_FORMAT(this->_client[fd]->_nickname,it->second->_username,it->second->_ipclient,it->second->channel[i].name, msg),it->first);
+	 			++i;
+			}
+			++it;
+		}
 	}
-
-
+/**************************************************/
 	server :: ~server()
 	{
 		for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)

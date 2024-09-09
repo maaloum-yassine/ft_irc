@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/08 22:23:44 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 08:43:28 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include "channels.hpp"
 
 std :: string 				trim (const std :: string &);
 bool						CheckDigit(const std:: string &);
@@ -36,4 +37,8 @@ std::vector<std::string> 	splitByCR(const std::string&);
 int							checkCommand(std::string&);
 std::string 				converUpper(std::string );
 std::vector<std::string>	splitBySpaces(const std::string &);
+void						printf_message(const std::string&, int);
+std::vector<std::string> 	split(const std::string&, char);
+int							count_words(const std::string& str, bool &tr);
+
 #endif

@@ -6,53 +6,60 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 20:12:14 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/08/15 20:39:13 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/09 07:13:50 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/client.hpp"
 
 
-client::client(int fd,const std::string ip,const std::string hostname):_fd(fd),_ip(ip),_hostname(hostname)
+client::client(int fd,const std::string& ip):_fd(fd),_ipclient(ip)
+{
+	_nickname = "";
+	_username = "";
+	_duplicateNickname = 0;
+	_passB = 0;
+	_nicknameB = 0;
+	_usernameB = 0;
+	_connected = 0;
+
+}
+
+
+void	client::addFd(int fd)
+{
+	this->_fd = fd;
+	_passB = true;
+}
+
+void    client::addNickname(std::string const& nickname)
 {
 
+	if (_passB && !nickname.empty())
+	{
+		this->_nickname =  nickname;
+		_nicknameB = 1;
+		if (_usernameB == 1)
+		{
+			_connected = 1;
+			std::cout << _username << std::endl;
+		}
+	}
+
 }
 
-
-const	std::string&	client::get_nickname() const {
-	return this->_nickname;
-}
-
-const	std::string&	client::get_username() const {
-	return this->_username;
-}
-
-const	std::string&	client::get_realname() const {
-	return this->_realname;
-}
-
-const	std::string&	client::get_hostname() const {
-	return this->_hostname;
-}
-
-int		client::get_fd() const {
-	return this->_fd;
-}
-
-
-void	client::set_realname(const std::string& RealName)
+void	client::addUser(std::string const & username)
 {
-	this->_realname = RealName;
-}
-
-void	client::set_username(const  std::string& UserName)
-{
-	this->_username = UserName;
-}
-
-void	client:: set_nickname(const std::string& nick)
-{
-	this->_nickname = nick;
+	if (_passB && !username.empty())
+	{
+		this->_username = username;
+		_usernameB = 1;
+		if (_nicknameB == 1)
+		{
+			_connected = 1;
+			std::cout << "this" << _nickname  << std::endl;
+		}
+	}
 }
 
 client :: ~client()

@@ -6,12 +6,12 @@
 #    By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/11 15:52:46 by ymaaloum          #+#    #+#              #
-#    Updated: 2024/09/05 02:01:04 by ymaaloum         ###   ########.fr        #
+#    Updated: 2024/09/09 06:47:18 by ymaaloum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX			=	g++
-CXXFLAGS	=
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
 
 #-Wall -Wextra -Werror -std=c++98
 
@@ -20,6 +20,7 @@ NAME		= 	ircserv
 SRC			=	src/main.cpp \
 				src/network/server.cpp \
 				src/network/client.cpp \
+				src/network/channels.cpp \
 				src/Parse/Parse.cpp \
 				src/function_utils/Func_Utils.cpp
 
