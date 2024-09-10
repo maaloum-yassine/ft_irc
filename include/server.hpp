@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/10 01:47:26 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/10 05:20:46 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ enum EnumName
 	OPERATOR,
 	POSITIF
 };
+#define RPL_TOPICDISPLAY(hostname, nick, channel, topic) ":" + hostname + " 332 " + nick + " " + channel + " :" + topic + "\r\n"
+#define RPL_TOPICWHOTIME(topicsetter, nick, hostname, channelName) ":" + hostname + " 333 " + nick + " " + channelName + " " + topicsetter + "!~" + topicsetter + "@" + hostname + "\r\n"
+#define RPL_NAMREPLY(hostname, clients, channelname, nick) ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"
+#define RPL_ENDOFNAMES(hostname, nick, channelname) ":" + hostname + " 366 " + nick + " " + channelname + " :END of /NAMES list\r\n"
+
+
 #define RPL_DELOP(hostname, nick, channel, username, target) ":" + nick + "!~" + username + "@" + hostname + " MODE " + channel + " -o " + target + "\r\n"
 #define ERR_NOTOP(hostname, channel) ":" + hostname + " 482 " + channel + " " + ":You're not a channel operator\r\n"
 #define ERR_CHANNELISFULL(hostname, nick, channelName) ":" + hostname + nick + " 471 " + channelName + " :Cannot join channel (+l) - channel is full, try again later\r\n"
@@ -73,24 +79,26 @@ class server
 		void	display_err(const std ::string &, bool )const;
 		~server();
 	private :
-		void	start_server();
-		void	create_socket();
-		void	handle_cnx_client();
-		void	disconnection_client(int);
-		void	handle_msg_client(size_t &);
-		void	commandApply(int , std::vector<std::string>&);
-		void	execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
-		bool	alreadyUsedNickname(const std::string& );
-		void	brodcast(const std::string &, const std::string &, int fd);
-		bool	availableChannel(const std::string &);
-		void	prive_msg(client , const std :: vector<std::string>&, const std::string &, int );
-		bool 	channelMember(const std::string&, int );
-		int		searchForid(const std::string&);
-		char	modeChannel(const std::string&);
-		void	join(const std :: vector<std::string>& , int);
-		int		idChannelfd(const std::string&, int &);
-		char	memberChannelNumbers(const std::string&);
-		bool	checkInvitedPersonnes(const std::string &, int, int );
+		void		start_server();
+		void		create_socket();
+		void		handle_cnx_client();
+		void		disconnection_client(int);
+		void		handle_msg_client(size_t &);
+		void		commandApply(int , std::vector<std::string>&);
+		void		execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
+		bool		alreadyUsedNickname(const std::string& );
+		void		brodcast(const std::string &, const std::string &, int fd);
+		bool		availableChannel(const std::string &);
+		void		prive_msg(client , const std :: vector<std::string>&, const std::string &, int );
+		bool 		channelMember(const std::string&, int );
+		int			searchForid(const std::string&);
+		char		modeChannel(const std::string&);
+		void		join(const std :: vector<std::string>& , int);
+		int			idChannelfd(const std::string&, int &);
+		char		memberChannelNumbers(const std::string&);
+		bool		checkInvitedPersonnes(const std::string &, int, int );
+		void		updateclients(const std::string & , int fd);
+		std::string	clientChannels(const std::string&);
 
 };
 

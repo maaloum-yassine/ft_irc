@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:07:18 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/09 08:30:58 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/10 05:16:11 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,9 +177,17 @@
 	}
 
 
-int	checkChannelName(const std::string& name)
-{
-	if(name[0] == '#' || name[0] == '&')
-		return (1);
-	return(0);
-}
+	int	checkChannelName(const std::string& name)
+	{
+		if(name[0] == '#' || name[0] == '&')
+			return (1);
+		return(0);
+	}
+
+
+	std::string	adminOrNot(bool state)
+	{
+		if(state)
+			return "@";
+		return "";
+	}
