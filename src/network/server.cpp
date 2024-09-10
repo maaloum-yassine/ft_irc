@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/09 22:03:20 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/10 01:51:33 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 	/********************************************************************************/
 
 
-	void	prive_msg(client _client, const std:: string& commandLine,int fd)
+	void	user(client _client, const std:: string& commandLine,int fd)
 	{
 
 		bool	tr;
@@ -205,13 +205,12 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		}
 		else
 			printf_message("You need more or less parameters \r\n", fd);
-
 	}
 
 
 	/*********************************************************************************/
 
-	void	join(client _client, const std :: vector<std::string>& split_cmd ,const std::string & commandLine, int fd)
+	void	server ::prive_msg(client _client, const std :: vector<std::string>& split_cmd ,const std::string & commandLine, int fd)
 	{
 		if (_client._connected)
 		{
@@ -221,16 +220,187 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 			{
 				if (availableChannel(split_cmd[1]))
 				{
-
+					if (channelMember(split_cmd[1], fd))
+						brodcast(messagesSplit[1], split_cmd[1], fd);
+					else
+						printf_message(ERR_CANNOTSENDTOCHAN(_client._ipclient,_client._nickname, commandLine),fd);
 				}
-
+				else
+					printf_message(ERR_CANNOTSENDTOCHAN(_client._ipclient,_client._nickname, split_cmd[1]),fd);
+			}
+			else
+			{
+				if(split_cmd.size() == 1)
+						printf_message(ERR_NORECIPIENT(_client._ipclient, _client._nickname, split_cmd[0]),fd);
+					else if(split_cmd.size() == 2)
+						printf_message(ERR_NOTEXTTOSEND(_client._ipclient, _client._nickname), fd);
+					else
+					{
+						int _fd = searchForid(split_cmd[1]);
+						if(_fd != -1)
+							printf_message(PRIVMSG_FORMAT(_client._nickname , _client._username, _client._ipclient, split_cmd[1] , messagesSplit[1]), _fd);
+						else
+							printf_message(ERR_NOSUCHNICK(_client._ipclient,_client._nickname),fd);
+					}
 			}
 		}
 	}
 
 
+
 	/*********************************************************************************/
 
+
+	char	server::modeChannel(const std::string& name)
+	{
+		unsigned int i;
+		std::map<int, client*>::iterator it  = this->_client.begin();
+
+		while (it !=  this->_client.end())
+		{
+			i = 0;
+			while (i < it->second->channel.size())
+			{
+				if(it->second->channel[i].name == name)
+					return (it->second->channel[i].mode);
+				++i;
+			}
+			++it;
+		}
+		return (0);
+	}
+
+	/*********************************************************************************/
+
+	int 	server::idChannelfd(const std::string& name, int &fd)
+	{
+
+		std::map<int, client*>::iterator it  = this->_client.begin();
+		unsigned	int	i;
+
+
+		while(it != this->_client.end())
+		{
+			i = 0;
+			while (i < it->second->channel.size())
+			{
+				if(it->second->channel[i].name == name)
+				{
+					fd = it->first;
+					return i;
+				}
+				i++;
+			}
+			it++;
+		}
+		return (-1);
+	}
+
+
+char		server::memberChannelNumbers(const std::string& name)
+{
+	std::map<int, client*>::iterator it  = this->_client.begin();
+	unsigned int i;
+	int number;
+
+	number = 0;
+
+	while (it != _client.end())
+	{
+		i = 0;
+		while (i < it->second->channel.size())
+		{
+			if(it->second->channel[i].name == name)
+			{
+				std::cout << "id " << it->first << number << std::endl;
+				number++;
+			}
+			i++;
+		}
+		it++;
+	}
+	std::cout << "number " << number << std::endl;
+	return (number);
+}
+
+
+
+	bool server::checkInvitedPersonnes(const std::string& name, int channelid, int fd)
+	{
+		int	i;
+		i = 0;
+
+		while(i < this->_client[fd]->channel[channelid].invited.size())
+		{
+			if(this->_client[fd]->channel[channelid].invited[i] == name)
+				return (1);
+			i++;
+		}
+		return (0);
+	}
+
+
+
+
+	void	server::join(const std :: vector<std::string>& split_cmd , int fd)
+	{
+		bool				b;
+		unsigned	int		i;
+		char				mode;
+
+		b = 0;
+		i = 0;
+		mode = 0;
+		if (split_cmd.size() != 2)
+			printf_message( "More or less argument\n\r" , fd);
+		else
+		{
+			std::vector<std::string>channelSplited = split(split_cmd[1], ',');
+			while (i < channelSplited.size())
+			{
+				if (channelSplited[1][0]== '#' || channelSplited[1][0]== '&')
+				{
+					if (availableChannel(channelSplited[i]))
+					{
+						mode = modeChannel(channelSplited[i]);
+						if (mode & (1 << LIMIT))
+						{
+								int id;
+								int _fd;
+								id = idChannelfd(channelSplited[i], _fd);
+								if (memberChannelNumbers(channelSplited[i]) < this->_client[_fd]->channel[id].limit)
+								{
+									std::cout << "1" << std::endl;
+									std::cout << "bnumber" << memberChannelNumbers(channelSplited[i]) << std::endl;
+									std::cout << "limit" << this->_client[_fd]->channel[id].limit<< std::endl;
+									if (mode & (1 << INVITE_ONLY) && checkInvitedPersonnes (this->_client[fd]->_nickname, id, _fd))
+									{
+										if(mode & (1 << KEY) && firstSplit.size() >2)
+										{
+ 											std::vector<std::string>keySplited = split(firstSplit[1], ',');
+											if(i < firstSplit.size() && keySplited[i] == clientServer[fd1].channel[id].key)
+											{
+												clientServer[fd].channel.push_back(channels(channelSplited[i], modeChannel(channelSplited[i]), 0, clientServer[fd1].channel[id].invited));
+												message(RPL_JOIN(clientServer[fd].nickname, clientServer[fd].username, channelSplited[i], clientServer[fd].ipclient) , fd);
+												updateclients(channelSplited[i], fd);
+											// message(RPL_NAMREPLY(clientServer[fd].ipclient, clientChannels(channelSplited[i])  , channelSplited[i], clientServer[fd].nickname) , fd);
+											}
+											else
+												std::cout << "hnaNOO" << std::endl;
+											}
+											else if(mode & (1 << KEY) && firstSplit.size() <= 2)
+												std::cout << "--NOO" << std::endl;
+											}
+								}
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	/*********************************************************************************/
 
 	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd, const std::string & commandLine)
 	{
@@ -250,10 +420,14 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 				}
 				break;
 			case 3 :
-					prive_msg(*(this->_client[fd]), commandLine ,fd);
+					user(*(this->_client[fd]), commandLine ,fd);
 					break ;
 			case 4 :
-					join(*(this->_client[fd]), split_cmd, commandLine, fd);
+					prive_msg(*(this->_client[fd]), split_cmd, commandLine, fd);
+					break ;
+			case 5 :
+					if (this->_client[fd]->_connected)
+						join(split_cmd, fd);
 					break ;
 			default:
 					break;
@@ -296,7 +470,7 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 	}
 /**************************************************/
 
-bool server::availableChannel(const std::string & name)
+bool server::availableChannel(const std::string & name_channel)
 {
 	unsigned	int i;
 	std::map<int, client*>::iterator it;
@@ -307,12 +481,43 @@ bool server::availableChannel(const std::string & name)
 		i = 0;
 		while (i < it->second->channel.size())
 		{
-			if(it->second->channel[i++].name == name)
+			if(it->second->channel[i++].name == name_channel)
 				return (1);
 		}
-		it++;
+		++it;
 	}
 	return (0);
+}
+
+
+
+
+bool server::channelMember(const std::string& channel, int fd)
+{
+	unsigned int i;
+
+ 	i = 0;
+
+	while (i < this->_client[fd]->channel.size())
+	{
+		if (this->_client[fd]->channel[i++].name == channel)
+		 	return (1);
+	}
+	return (0);
+}
+
+
+
+int	server::searchForid(const std::string& name)
+{
+	std::map<int, client*>::iterator it = this->_client.begin();
+	while(it != this->_client.end())
+	{
+		if(it->second->_nickname == name)
+			return(it->first);
+		it++;
+	}
+	return (-1);
 }
 
 
