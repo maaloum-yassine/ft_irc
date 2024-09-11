@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/11 09:00:47 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 00:47:37 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ typedef std::vector<pollfd>::iterator	pllfd_itertr;
 
 enum EnumName
 {
-    INVITE_ONLY,
+	INVITE_ONLY,
 	TOPIC,
-    KEY,
-    LIMIT,
+	KEY,
+	LIMIT,
 	OPERATOR,
 	POSITIF
 };
@@ -110,10 +110,15 @@ class server
 		void		kick(int, const std :: vector<std::string>& , const std:: string& );
 		void		kickUser(int, int,const std::string,const std::string );
 		std::string	reason(const std::string&, int );
-
+		void		invite(int, const std :: vector<std::string>&);
+		void 		inserUser(const std::string& ,const  std::string &);
+		void		part(int, const std :: vector<std::string>& );
+		void		kickclients(const std::string& , int);
+		void		mode(int fd, const std :: vector<std::string>&);
+		int			idChannel(const std::string&, int&);
+		void		applicateMode(char, const std::string&,int, char,std::vector<std::string>&);
+		void		updateMode(const std::string& , int , char,const std::string&);
+		void		brodcastMode (const std::string&,const std::string &, int,const std::vector<std::string>& );
 };
 
 #endif
-
-
-

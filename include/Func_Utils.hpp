@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:03:00 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/11 01:36:42 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 00:44:31 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ bool						CheckDigit(const std:: string &);
 bool						endOfCommand(const	std::string &);
 void						printf_message(const std::string&, int);
 int							checkChannelName(const std::string&);
+int							convert(char *);
+// bool						limitNumber(const std::string&);
+// bool						check_arg(const char );
 
 
 
