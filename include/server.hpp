@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/11 02:34:04 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/11 09:00:47 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,17 @@ class server
 		std::string	clientChannels(const std::string&);
 		void		displayTopic(std::string const& , std::string const&);
 		std::string	topicName(const std::string& );
+		void		topic(int, const std :: vector<std::string>& , const std:: string&);
+		int			find_channel_id(const std::string&, int);
+		bool		topicMode(const std::string&, int);
+		bool 		on_channel(const std::string&, int);
+		bool 		operator_user(const std::string &, int );
+		void		updateChannelTopic(const std::string &, const std::string&);
+		void		kick(int, const std :: vector<std::string>& , const std:: string& );
+		void		kickUser(int, int,const std::string,const std::string );
+		std::string	reason(const std::string&, int );
 
 };
-
 
 #endif
 

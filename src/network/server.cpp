@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/11 02:51:58 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/11 09:54:25 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,10 +436,8 @@ char		server::memberChannelNumbers(const std::string& name)
 	void	server::join(const std :: vector<std::string>& split_cmd , int fd)
 	{
 		unsigned	int		i;
-		bool				b;
 		char				mode;
 
-		b = 0;
 		i = 0;
 		mode = 0;
 		if (split_cmd.size() != 2)
@@ -448,7 +446,6 @@ char		server::memberChannelNumbers(const std::string& name)
 		{
 			std :: cout << "/*/*/**" << std :: endl;
 			std::vector<std::string>channelSplited = split(split_cmd[1], ',');
-			std :: cout << channelSplited[1][0] << std :: endl;
 			while (i < channelSplited.size())
 			{
 				if (checkChannelName(channelSplited[i]))
@@ -581,7 +578,199 @@ char		server::memberChannelNumbers(const std::string& name)
 	}
 
 	/*********************************************************************************/
+	bool server::topicMode(const std::string& name, int fd)
+	{
+		int	pos;
 
+		pos = find_channel_id(name, fd);
+		if(pos != -1)
+		{
+			if(!(this->_client[fd]->channel[pos].mode & (1 << TOPIC)))
+				return (1);
+			return(0);
+		}
+		return(0);
+	}
+	/**********************************************************************************/
+	int	server::find_channel_id(const std::string& name, int fd)
+	{
+		unsigned int i;
+
+		i = 0;
+		while (i < this->_client[fd]->channel.size())
+		{
+			if ( this->_client[fd]->channel[i].name == name)
+				return (i);
+			i++;
+		}
+		return (-1);
+	}
+
+
+	bool server::on_channel(const std::string& name, int fd)
+	{
+		unsigned	int i;
+
+		i = 0;
+		while (i < this->_client[fd]->channel.size())
+		{
+			if (this->_client[fd]->channel[i].name == name)
+				return (1);
+			i++;
+		}
+		return (0);
+	}
+
+
+
+
+	bool server::operator_user(const std::string& name, int fd)
+	{
+		int pos;
+
+		pos = find_channel_id(name, fd);
+		if(pos != -1)
+		{
+			if(this->_client[fd]->channel[pos].op)
+				return (1);
+			return(0);
+		}
+		return(0);
+	}
+
+
+
+
+	void		server::updateChannelTopic(const  std::string& topic,const  std::string& channelname)
+	{
+		std::map<int, client*>::iterator it = this->_client.begin();
+
+		unsigned	int i;
+		while(it != this->_client.end())
+		{
+			i = 0;
+			while(i < it->second->channel.size())
+			{
+				if(it->second->channel[i].name == channelname)
+				{
+					it->second->channel[i].topic = topic;
+					break;
+				}
+				i++;
+			}
+			it++;
+		}
+	}
+
+
+
+	/************************************************************************************/
+	void	server::topic(int fd, const std :: vector<std::string>& split_cmd, const std:: string& commandLine)
+	{
+		std :: cout << "*-*-*-" <<std :: endl;
+		int error_ch = 0;
+		int error_rights = 0;
+		int topic = 0;
+
+
+		error_ch = on_channel(split_cmd[1],fd);
+		error_rights = operator_user(split_cmd[1], fd);
+		topic = topicMode(split_cmd[1], fd);
+		if(error_ch && (error_rights || topic))
+		{
+			std::vector<std::string>messagesSplit = split(commandLine, ':');
+			if(messagesSplit.size() == 2)
+			{
+				updateChannelTopic(messagesSplit[1], split_cmd[1]);
+				displayTopic(messagesSplit[1], split_cmd[1]);
+			}
+			else if(messagesSplit.size() == 1)
+			{
+				printf_message(RPL_TOPIC(this->_client[fd]->_ipclient, this->_client[fd]->_nickname, split_cmd[1],topicName(split_cmd[1])),fd);
+				std::cout << topicName(split_cmd[1]) << std::endl;
+				std::cout << split_cmd[1] << std::endl;
+			}
+		}
+		else
+		{
+			if(error_ch == 0)
+				printf_message(ERR_NOTONCHANNEL(this->_client[fd]->_ipclient, split_cmd[1]), fd);
+			else if(error_ch == 1 && error_rights == 0)
+				printf_message(ERR_CHANOPRIVSNEEDED(this->_client[fd]->_ipclient,this->_client[fd]->_nickname,split_cmd[1]), fd);
+			}
+
+	}
+
+
+	/******************************************************************************* */
+
+	std::string server::reason(const std::string& str, int fd)
+	{
+		std::vector<std::string> splitedString;
+		std::string line = this->_client[fd]->_nickname;
+		splitedString = split(str,':');
+		if(splitedString.size() > 1)
+			line = splitedString[1];
+		return line;
+	}
+
+
+
+	void server::kickUser(int fd, int index, const std::string name,const std::string reason)
+	{
+		bool b;
+		unsigned int i;
+		i = 0;
+		b = 0;
+		std::map<int, client*>::iterator it = this->_client.begin();
+		while (i < this->_client[index]->channel.size())
+		{
+			if (this->_client[index]->channel[i].name == name)
+			{
+				b = 0;
+				unsigned int j;
+				while(it != this->_client.end())
+				{
+					j = 0;
+					while(j < it->second->channel.size())
+					{
+						if(it->second->channel[j].name == name)
+							printf_message(RPL_KICK(this->_client[fd]->_nickname, this->_client[fd]->_username,this->_client[fd]->_ipclient,name,this->_client[index]->_nickname,reason),it->first);
+						j++;
+					}
+					it++;
+				}
+				this->_client[index]->channel.erase(this->_client[index]->channel.begin() + i);
+				break;
+			}
+			i++;
+		}
+		if(b == 0)
+			printf_message(ERR_NOSUCHNICK(this->_client[fd]->_ipclient, this->_client[fd]->_nickname), fd);
+	}
+
+	void server::kick(int fd, const std :: vector<std::string>& split_cmd, const std:: string& commandLine)
+	{
+		std::string line = "";
+
+		if(split_cmd.size() < 2)
+			ERR_NEEDMOREPARAMS(this->_client[fd]->_nickname ,this->_client[fd]->_ipclient,split_cmd[0]);
+		else
+		{
+			if(operator_user(split_cmd[1], fd))
+			{
+				int index = searchForid(split_cmd[2]);
+				if(index == -1)
+					printf_message(ERR_NOSUCHNICK(this->_client[fd]->_ipclient,this->_client[fd]->_nickname),fd);
+				else
+					kickUser(fd, index, split_cmd[1], reason(commandLine, fd));
+			}
+			else
+				printf_message(ERR_CHANOPRIVSNEEDED(this->_client[fd]->_ipclient,this->_client[fd]->_nickname,split_cmd[1]),fd);
+		}
+	}
+
+	/*********************************************************************************/
 	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd, const std::string & commandLine)
 	{
 		switch (index_cmd)
@@ -602,12 +791,20 @@ char		server::memberChannelNumbers(const std::string& name)
 			case 3 :
 					user(this->_client[fd], commandLine ,fd);
 					break ;
-			case 4 :
+			case 4  :
 					prive_msg(this->_client[fd], split_cmd, commandLine, fd);
 					break ;
 			case 5 :
 					if (this->_client[fd]->_connected)
 						join(split_cmd, fd);
+					break ;
+			case 6:
+					if (this->_client[fd]->_connected)
+						topic(fd, split_cmd, commandLine);
+					break ;
+			case 7:
+					if (this->_client[fd]->_connected)
+						kick(fd, split_cmd, commandLine);
 					break ;
 			default:
 					break;
@@ -704,9 +901,9 @@ int	server::searchForid(const std::string& name)
 
 /*****************************************************/
 server :: ~server()
-	{
-		for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)
-			delete it->second;
-		this->_client.clear();
-	}
+{
+	for (std::map<int, client*>::iterator it = _client.begin(); it != _client.end(); ++it)
+		delete it->second;
+	this->_client.clear();
+}
 
