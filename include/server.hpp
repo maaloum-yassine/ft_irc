@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/10 05:20:46 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/11 02:34:04 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ class server
 		bool		alreadyUsedNickname(const std::string& );
 		void		brodcast(const std::string &, const std::string &, int fd);
 		bool		availableChannel(const std::string &);
-		void		prive_msg(client , const std :: vector<std::string>&, const std::string &, int );
+		void		prive_msg(client* , const std :: vector<std::string>&, const std::string &, int );
 		bool 		channelMember(const std::string&, int );
 		int			searchForid(const std::string&);
 		char		modeChannel(const std::string&);
@@ -99,9 +99,13 @@ class server
 		bool		checkInvitedPersonnes(const std::string &, int, int );
 		void		updateclients(const std::string & , int fd);
 		std::string	clientChannels(const std::string&);
+		void		displayTopic(std::string const& , std::string const&);
+		std::string	topicName(const std::string& );
 
 };
 
 
 #endif
+
+
 

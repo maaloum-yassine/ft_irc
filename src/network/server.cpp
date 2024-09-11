@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:37:50 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/10 05:35:15 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/11 02:51:58 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,18 +145,18 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 
 
 	/********************************************************************************/
-	void	check_password(client _client ,const std::string & pass, const std::string& pass_serv, int fd)
+	void	check_password(client *_client ,const std::string & pass, const std::string& pass_serv, int fd)
 	{
 		if (pass == pass_serv)
 		{
 			printf_message("Correct password\n\r", fd);
-			_client._passB = 1;
-			std::cout << "passb" << _client._passB << std::endl;
-			std::cout << "nicknameb" << _client._nicknameB<< std::endl;
-			std::cout << "usernameB" << _client._usernameB<< std::endl;
-			if(_client._passB && _client._nicknameB && _client._usernameB)
+			_client->_passB = 1;
+			std::cout << "passb" << _client->_passB << std::endl;
+			std::cout << "nicknameb" << _client->_nicknameB<< std::endl;
+			std::cout << "usernameB" << _client->_usernameB<< std::endl;
+			if(_client->_passB && _client->_nicknameB && _client->_usernameB)
 			{
-				std::string msg = ":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n";
+				std::string msg = ":ircserv_KAI->chat 001 " + _client->_nickname + " :Welcome to the IRC Network, " + _client->_nickname + " \r\n";
 				printf_message(msg, fd);
 			}
 		}
@@ -177,18 +177,18 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		return (0);
 	}
 
-	void	nick(client _client ,const std::string & _nicknm, int fd)
+	void	nick(client* _client ,const std::string & _nicknm, int fd)
 	{
-		_client.addNickname(_nicknm);
-		printf_message(RPL_NICK_SET(_client._ipclient, _nicknm), fd);
-		_client._nicknameB = 1;
-		if(_client._passB && _client._nicknameB && _client._usernameB)
-			printf_message( ":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n", fd);
+		_client->addNickname(_nicknm);
+		printf_message(RPL_NICK_SET(_client->_ipclient, _nicknm), fd);
+		_client->_nicknameB = 1;
+		if(_client->_passB && _client->_nicknameB && _client->_usernameB)
+			printf_message( ":ircserv_KAI->chat 001 " + _client->_nickname + " :Welcome to the IRC Network, " + _client->_nickname + " \r\n", fd);
 	}
 	/********************************************************************************/
 
 
-	void	user(client _client, const std:: string& commandLine,int fd)
+	void	user(client *_client, const std:: string& commandLine,int fd)
 	{
 
 		bool	tr;
@@ -198,10 +198,10 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 		if(count_words(commandLine, tr) == 5 && tr)
 		{
 			std::cout << username[1] << std::endl;
-			_client.addUser(username[1]);
-			_client._usernameB = 1;
-			if(_client._passB && _client._nicknameB && _client._usernameB)
-				printf_message(":ircserv_KAI.chat 001 " + _client._nickname + " :Welcome to the IRC Network, " + _client._nickname + " \r\n", fd);
+			_client->addUser(username[1]);
+			_client->_usernameB = 1;
+			if(_client->_passB && _client->_nicknameB && _client->_usernameB)
+				printf_message(":ircserv_KAI->chat 001 " + _client->_nickname + " :Welcome to the IRC Network, " + _client->_nickname + " \r\n", fd);
 		}
 		else
 			printf_message("You need more or less parameters \r\n", fd);
@@ -210,11 +210,11 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 
 	/*********************************************************************************/
 
-	void	server ::prive_msg(client _client, const std :: vector<std::string>& split_cmd ,const std::string & commandLine, int fd)
+	void	server ::prive_msg(client* _client, const std :: vector<std::string>& split_cmd ,const std::string & commandLine, int fd)
 	{
-		if (_client._connected)
+		if (_client->_connected)
 		{
-			std::cout << _client._nickname << std::endl;
+			std::cout << _client->_nickname << std::endl;
 			std::vector<std::string>messagesSplit = split(commandLine, ':');
 			if (split_cmd[1][0]== '#' || split_cmd[1][0]== '&')
 			{
@@ -223,24 +223,24 @@ server::server(const std:: string& port, const std:: string& password):_port(por
 					if (channelMember(split_cmd[1], fd))
 						brodcast(messagesSplit[1], split_cmd[1], fd);
 					else
-						printf_message(ERR_CANNOTSENDTOCHAN(_client._ipclient,_client._nickname, commandLine),fd);
+						printf_message(ERR_CANNOTSENDTOCHAN(_client->_ipclient,_client->_nickname, commandLine),fd);
 				}
 				else
-					printf_message(ERR_CANNOTSENDTOCHAN(_client._ipclient,_client._nickname, split_cmd[1]),fd);
+					printf_message(ERR_CANNOTSENDTOCHAN(_client->_ipclient,_client->_nickname, split_cmd[1]),fd);
 			}
 			else
 			{
 				if(split_cmd.size() == 1)
-						printf_message(ERR_NORECIPIENT(_client._ipclient, _client._nickname, split_cmd[0]),fd);
+						printf_message(ERR_NORECIPIENT(_client->_ipclient, _client->_nickname, split_cmd[0]),fd);
 					else if(split_cmd.size() == 2)
-						printf_message(ERR_NOTEXTTOSEND(_client._ipclient, _client._nickname), fd);
+						printf_message(ERR_NOTEXTTOSEND(_client->_ipclient, _client->_nickname), fd);
 					else
 					{
 						int _fd = searchForid(split_cmd[1]);
 						if(_fd != -1)
-							printf_message(PRIVMSG_FORMAT(_client._nickname , _client._username, _client._ipclient, split_cmd[1] , messagesSplit[1]), _fd);
+							printf_message(PRIVMSG_FORMAT(_client->_nickname , _client->_username, _client->_ipclient, split_cmd[1] , messagesSplit[1]), _fd);
 						else
-							printf_message(ERR_NOSUCHNICK(_client._ipclient,_client._nickname),fd);
+							printf_message(ERR_NOSUCHNICK(_client->_ipclient,_client->_nickname),fd);
 					}
 			}
 		}
@@ -373,7 +373,6 @@ char		server::memberChannelNumbers(const std::string& name)
 	void		server::updateclients(const std::string& channel , int fd)
 	{
 		unsigned	int		i;
-		bool				b;
 
 		std::map<int, client*>::iterator it = this->_client.begin();
 		while (it != this->_client.end())
@@ -389,11 +388,55 @@ char		server::memberChannelNumbers(const std::string& name)
 	}
 
 
+	void		server::displayTopic(const std::string& topic, const std::string& channelname)
+	{
+		std::map<int, client*>::iterator it = this->_client.begin();
+
+		unsigned	int i;
+		std::cout << "topic name " << topic << std::endl;
+		std::cout << "channel " << channelname << std::endl;
+		std::cout << "topic" << topic;
+		while(it != this->_client.end())
+		{
+			i = 0;
+			while (i < it->second->channel.size())
+			{
+				if (it->second->channel[i].name == channelname)
+				{
+					printf_message(RPL_TOPIC(it->second->_ipclient, it->second->_nickname, channelname, topic),it->first);
+				}
+				++i;
+			}
+			++it;
+		}
+	}
+
+	std::string		server::topicName(const std::string& channelname)
+	{
+		unsigned int i;
+
+		std::map<int, client*>::iterator it = this->_client.begin();
+
+		while(it != this->_client.end())
+		{
+			i = 0;
+			while(i < it->second->channel.size())
+			{
+				if(it->second->channel[i].name == channelname)
+					return it->second->channel[i].topic;
+				++i;
+			}
+			++it;
+		}
+		return "";
+	}
+
+
 
 	void	server::join(const std :: vector<std::string>& split_cmd , int fd)
 	{
-		bool				b;
 		unsigned	int		i;
+		bool				b;
 		char				mode;
 
 		b = 0;
@@ -403,10 +446,12 @@ char		server::memberChannelNumbers(const std::string& name)
 			printf_message( "More or less argument\n\r" , fd);
 		else
 		{
+			std :: cout << "/*/*/**" << std :: endl;
 			std::vector<std::string>channelSplited = split(split_cmd[1], ',');
+			std :: cout << channelSplited[1][0] << std :: endl;
 			while (i < channelSplited.size())
 			{
-				if (channelSplited[1][0]== '#' || channelSplited[1][0]== '&')
+				if (checkChannelName(channelSplited[i]))
 				{
 					if (availableChannel(channelSplited[i]))
 					{
@@ -418,7 +463,7 @@ char		server::memberChannelNumbers(const std::string& name)
 							id = idChannelfd(channelSplited[i], _fd);
 							if (memberChannelNumbers(channelSplited[i]) < this->_client[_fd]->channel[id].limit)
 							{
-								std::cout << "1" << std::endl;
+								std::cout << "1333337" << std::endl;
 								std::cout << "bnumber" << memberChannelNumbers(channelSplited[i]) << std::endl;
 								std::cout << "limit" << this->_client[_fd]->channel[id].limit<< std::endl;
 								if (mode & (1 << INVITE_ONLY) && checkInvitedPersonnes (this->_client[fd]->_nickname, id, _fd))
@@ -444,17 +489,95 @@ char		server::memberChannelNumbers(const std::string& name)
 										printf_message(RPL_JOIN(this->_client[fd]->_nickname, this->_client[fd]->_username, channelSplited[i], this->_client[fd]->_ipclient) , fd);
 										// message(RPL_NAMREPLY(this->_client[fd]->ipclient, clientChannels(channelSplited[i])  , channelSplited[i], this->_client[fd]->nickname) , fd);
 										updateclients(channelSplited[i], fd);
+										displayTopic(topicName(channelSplited[i]), channelSplited[i]);
 									}
 								}
 							}
 							else
 								printf_message(ERR_CHANNELISFULL(this->_client[fd]->_ipclient, this->_client[fd]->_nickname, channelSplited[i]), fd);
 						}
+						else
+						{
+							int id;
+							int _fd;
+							id = idChannelfd(channelSplited[i], _fd);
+							std::cout << "2" << std::endl;
+							if (mode & (1 << INVITE_ONLY) && checkInvitedPersonnes(this->_client[fd]->_nickname, id, _fd))
+							{
+								std::cout << "INVITE ONLY" << std::endl;
+								this->_client[fd]->channel.push_back(channels(channelSplited[i], modeChannel(channelSplited[i]), 0, this->_client[_fd]->channel[id].invited));
+								printf_message(RPL_JOIN(this->_client[fd]->_nickname, this->_client[fd]->_username, channelSplited[i], this->_client[fd]->_ipclient), fd);
+								// message(RPL_NAMREPLY(this->_client[fd].ipclient, clientChannels(channelSplited[i])  , channelSplited[i], clientServer[fd].nickname) , fd);
+								updateclients(channelSplited[i], fd);
+								displayTopic(topicName(channelSplited[i]), channelSplited[i]);
+							}
+							else if(!(mode & (1 << INVITE_ONLY)))
+							{
+								if(mode & (1 << KEY) && split_cmd.size() > 2)
+								{
+									std::cout << "key ONLY" << std::endl;
+									std::vector<std::string>keySplited = split(split_cmd[2], ',');
+									if (i <= keySplited.size() && keySplited[i] == this->_client[_fd]->channel[id].key)
+									{
+										this->_client[fd]->channel.push_back(channels(channelSplited[i], modeChannel(channelSplited[i]), 0, this->_client[_fd]->channel[id].invited));
+										printf_message(RPL_JOIN(this->_client[fd]->_nickname, this->_client[fd]->_username, channelSplited[i], this->_client[fd]->_ipclient), fd);
+										// printf_message(RPL_NAMREPLY(this->_client[fd].ipclient, clientChannels(channelSplited[i])  , channelSplited[i], this->_client[fd].nickname) , fd);
+										updateclients(channelSplited[i], fd);
+										displayTopic(topicName(channelSplited[i]), channelSplited[i]);
+									}
+									else
+										printf_message("Wrong password\n\r" , fd);
+								}
+								else if(mode & (1 << KEY) && split_cmd.size() <= 2)
+										printf_message(ERR_BADCHANNELKEY(this->_client[fd]->_nickname,this->_client[fd]->_ipclient,channelSplited[i]),fd);
+								else
+								{
+									std::cout << "no ONLY" << std::endl;
+									this->_client[fd]->channel.push_back(channels(channelSplited[i], modeChannel(channelSplited[i]), 0, this->_client[_fd]->channel[id].invited));
+									printf_message(RPL_JOIN(this->_client[fd]->_nickname, this->_client[fd]->_username, channelSplited[i], this->_client[fd]->_ipclient), fd);
+									// printf_message(RPL_NAMREPLY(this->_client[fd].ipclient, clientChannels(channelSplited[i])  , channelSplited[i], this->_client[fd].nickname) , fd);
+									updateclients(channelSplited[i], fd);
+									displayTopic(topicName(channelSplited[i]), channelSplited[i]);
+								}
+							}
+							else
+							{
+								printf_message(ERR_INVITEONLY(this->_client[fd]->_nickname, this->_client[fd]->_ipclient, channelSplited[i]), fd);
+							}
+						}
+					}
+					else
+					{
+						std::cout << "3" << std::endl;
+						std::vector<std::string> invited;
+						this->_client[fd]->channel.push_back(channels(channelSplited[i], 1 << TOPIC, 1, invited));
+						printf_message(RPL_JOIN(this->_client[fd]->_nickname, this->_client[fd]->_username, channelSplited[i], this->_client[fd]->_ipclient) ,fd);
+						printf_message(RPL_NAMREPLY(this->_client[fd]->_ipclient, clientChannels(channelSplited[i]), channelSplited[i], this->_client[fd]->_nickname), fd);
+						displayTopic(topicName(channelSplited[i]), channelSplited[i]);
 					}
 				}
+				else
+				{
+					printf_message(ERR_NOSUCHCHANNEL(this->_client[fd]->_ipclient, this->_client[fd]->_nickname, channelSplited[i]), fd);
+					std::map<int, client*>::iterator it = _client.begin();
+					while(it != _client.end())
+					{
+						unsigned	int i;
+
+						i = 0;
+						while(i < it->second->channel.size())
+						{
+							unsigned	int j = 0;
+							while(j < it->second->channel[i].invited.size())
+								std::cout << it->second->channel[i].invited[j++] << std::endl;
+							++i;
+						}
+						++it;
+					}
+				}
+				i++;
 			}
 		}
-
 	}
 
 	/*********************************************************************************/
@@ -465,11 +588,11 @@ char		server::memberChannelNumbers(const std::string& name)
 		{
 			case 1:
 				if (split_cmd.size() > 1)
-					check_password(*(this->_client[fd]), split_cmd[1], this->_password, fd);
+					check_password(this->_client[fd], split_cmd[1], this->_password, fd);
 				break;
 			case 2:
 				if (!alreadyUsedNickname(split_cmd[1]))
-					nick(*(this->_client[fd]), split_cmd[1], fd);
+					nick(this->_client[fd], split_cmd[1], fd);
 				else
 				{
 					this->_client[fd]->_duplicateNickname = 1;
@@ -477,10 +600,10 @@ char		server::memberChannelNumbers(const std::string& name)
 				}
 				break;
 			case 3 :
-					user(*(this->_client[fd]), commandLine ,fd);
+					user(this->_client[fd], commandLine ,fd);
 					break ;
 			case 4 :
-					prive_msg(*(this->_client[fd]), split_cmd, commandLine, fd);
+					prive_msg(this->_client[fd], split_cmd, commandLine, fd);
 					break ;
 			case 5 :
 					if (this->_client[fd]->_connected)
@@ -499,8 +622,7 @@ char		server::memberChannelNumbers(const std::string& name)
 		while (++i < commandLine.size())
 		{
 			std::vector<std::string>firstSplit = splitBySpaces(commandLine[i]);
-			for (std::vector<std::string>::iterator it = firstSplit.begin(); it !=  firstSplit.end(); ++it)
-				execute_cmd(fd, firstSplit ,checkCommand(firstSplit[0]), commandLine[i]);
+			execute_cmd(fd, firstSplit ,checkCommand(firstSplit[0]), commandLine[i]);
 		}
 	}
 
@@ -529,6 +651,7 @@ char		server::memberChannelNumbers(const std::string& name)
 
 bool server::availableChannel(const std::string & name_channel)
 {
+
 	unsigned	int i;
 	std::map<int, client*>::iterator it;
 
