@@ -6,23 +6,24 @@
 #    By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/11 15:52:46 by ymaaloum          #+#    #+#              #
-#    Updated: 2024/09/12 05:58:54 by ymaaloum         ###   ########.fr        #
+#    Updated: 2024/09/12 07:46:14 by ymaaloum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX			=	g++
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
-
+CXXFLAGS	=
+# -Wall -Wextra -Werror -std=c++98
 
 NAME		= 	ircserv
 
 SRC			=	src/main.cpp \
 				src/network/server.cpp \
-				src/function_utils/cmd_irc.cpp \
 				src/network/client.cpp \
 				src/network/channels.cpp \
 				src/Parse/Parse.cpp \
 				src/function_utils/Func_Utils.cpp \
+
+#  src/function_utils/cmd_irc.cpp \
 
 RESET		= \033[1;97m
 GREEN		= \033[1;32m
