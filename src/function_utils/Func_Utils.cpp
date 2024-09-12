@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:07:18 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/12 01:50:13 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 04:11:40 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@
 
 
 
-	int convert(char *number)
+	int convert(const char *number)
 	{
 		int num;
 		char *rest = 0;

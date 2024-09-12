@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/12 01:54:11 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 07:22:57 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "Parse.hpp"
 #include "client.hpp"
-
+#include "cmd_irc.hpp"
 typedef std::vector<pollfd>::iterator	pllfd_itertr;
 
 enum EnumName
@@ -86,171 +86,9 @@ class server
 		void		handle_msg_client(size_t &);
 		void		commandApply(int , std::vector<std::string>&);
 		void		execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
-		bool		alreadyUsedNickname(const std::string& );
-		void		brodcast(const std::string &, const std::string &, int fd);
-		bool		availableChannel(const std::string &);
-		void		prive_msg(client* , const std :: vector<std::string>&, const std::string &, int );
-		bool 		channelMember(const std::string&, int );
-		int			searchForid(const std::string&);
-		char		modeChannel(const std::string&);
-		void		join(const std :: vector<std::string>& , int);
-		int			idChannelfd(const std::string&, int &);
-		char		memberChannelNumbers(const std::string&);
-		bool		checkInvitedPersonnes(const std::string &, int, int );
-		void		updateclients(const std::string & , int fd);
-		std::string	clientChannels(const std::string&);
-		void		displayTopic(std::string const& , std::string const&);
-		std::string	topicName(const std::string& );
-		void		topic(int, const std :: vector<std::string>& , const std:: string&);
-		int			find_channel_id(const std::string&, int);
-		bool		topicMode(const std::string&, int);
-		bool 		on_channel(const std::string&, int);
-		bool 		operator_user(const std::string &, int );
-		void		updateChannelTopic(const std::string &, const std::string&);
-		void		kick(int, const std :: vector<std::string>& , const std:: string& );
-		void		kickUser(int, int,const std::string,const std::string );
-		std::string	reason(const std::string&, int );
-		void		invite(int, const std :: vector<std::string>&);
-		void 		inserUser(const std::string& ,const  std::string &);
-		void		part(int, const std :: vector<std::string>& );
-		void		kickclients(const std::string& , int);
-		// void		mode(int fd, const std :: vector<std::string>&);
-		int			idChannel(const std::string&, int&);
-		void		applicateMode(char, const std::string&,int, char, std::vector<std::string>);
-		void		updateMode(const std::string& , int , char,const std::string&);
-		void		brodcastMode (const std::string&,const std::string &, int,const std::vector<std::string>& );
+
 };
 
 #endif
 
 
-
-void server::applicateMode(char mode, const std::string& channel, int fd, char used,std::vector<std::string> args) {
-	std::map<int, client*>::iterator it = this->_client.begin();
-
-	while (it != this->_client.end()) {
-		for (size_t i = 0; i < it->second->channel.size(); ++i) {
-			if (it->second->channel[i].name == channel) {
-				// Gestion du mode INVITE_ONLY
-				if (used & (1 << INVITE_ONLY)) {
-					if (mode & (1 << INVITE_ONLY)) {
-						if (it->second->channel[i].mode & (1 << INVITE_ONLY)) {
-							std::cout << "already INVITE " << std::endl;
-						} else {
-							updateMode(channel, INVITE_ONLY, '+', "");
-							brodcastMode(channel, "+i", fd, args);
-							std::cout << "INVITE " << std::endl;
-						}
-					} else {
-						if (it->second->channel[i].mode & (1 << INVITE_ONLY)) {
-							updateMode(channel, INVITE_ONLY, '-', "");
-							brodcastMode(channel, "-i", fd, args);
-							std::cout << "DELETE INVITE " << std::endl;
-						} else {
-							std::cout << "cannot DELETE invite " << std::endl;
-						}
-					}
-				}
-
-				// Gestion du mode TOPIC
-				if (used & (1 << TOPIC)) {
-					if (mode & (1 << TOPIC)) {
-						if (it->second->channel[i].mode & (1 << TOPIC)) {
-							std::cout << "already topic " << std::endl;
-						} else {
-							updateMode(channel, TOPIC, '+', "");
-							brodcastMode(channel, "+t", fd, args);
-							std::cout << "INVITE topic" << std::endl;
-						}
-					} else {
-						if (it->second->channel[i].mode & (1 << TOPIC)) {
-							updateMode(channel, TOPIC, '-', "");
-							brodcastMode(channel, "-t", fd, args);
-							std::cout << "DELETE INVITE topic " << std::endl;
-						} else {
-							std::cout << "cannot DELETE topic " << std::endl;
-						}
-					}
-				}
-
-				// Gestion du mode KEY
-				if (!args[0].empty()) {
-					if (mode & (1 << KEY)) {
-						if (it->second->channel[i].mode & (1 << KEY)) {
-							std::cout << "already key" << std::endl;
-						} else {
-							updateMode(channel, KEY, '+', args[0]);
-							brodcastMode(channel, "+k", fd, args);
-							std::cout << "INVITE key" << std::endl;
-						}
-					} else {
-						if (it->second->channel[i].mode & (1 << KEY) && it->second->channel[i].key == args[0]) {
-							updateMode(channel, KEY, '-', "");
-							brodcastMode(channel, "-k", fd, args);
-							std::cout << "DELETE key " << std::endl;
-						} else {
-							std::cout << "invalid key " << std::endl;
-						}
-					}
-				}
-
-				// Gestion du mode LIMIT
-				if (!args[1].empty() && limitNumber(args[1])) {
-					if (mode & (1 << LIMIT)) {
-						if (it->second->channel[i].mode & (1 << LIMIT)) {
-							std::cout << "already limit" << std::endl;
-						} else {
-							int num = convert(args[1].c_str());
-							args[1] = std::to_string(num);
-							updateMode(channel, LIMIT, '+', args[1]);
-							brodcastMode(channel, "+l", fd, args);
-							std::cout << "INVITE limit" << std::endl;
-						}
-					} else {
-						int limit = convert(args[1].c_str());
-						if (it->second->channel[i].mode & (1 << LIMIT) && limit == it->second->channel[i].limit) {
-							updateMode(channel, LIMIT, '-', args[1]);
-							brodcastMode(channel, "-l", fd, args);
-							std::cout << "DELETE limit " << std::endl;
-						} else {
-							std::cout << "cannot DELETE limit " << std::endl;
-						}
-					}
-				}
-
-				// Gestion du mode OPERATOR
-				if (!args[2].empty()) {
-					int f = searchForid(args[2]);
-					if (f != -1) {
-						for (size_t k = 0; k < this->_client[f]->channel.size(); ++k) {
-							if (this->_client[f]->channel[k].name == it->second->channel[i].name) {
-								if (mode & (1 << OPERATOR)) {
-									if (this->_client[f]->channel[k].op == 1) {
-										std::cout << "already operator" << std::endl;
-									} else {
-										this->_client[f]->channel[k].op = 1;
-										brodcastMode(channel, "+o", fd, args);
-										updateclients(channel, fd);
-										std::cout << "set operator" << std::endl;
-									}
-								} else {
-									if (this->_client[f]->channel[k].op == 1) {
-										this->_client[f]->channel[k].op = 0;
-										brodcastMode(channel, "-o", fd, args);
-										updateclients(channel, fd);
-										std::cout << "DELETE operator " << std::endl;
-									} else {
-										std::cout << "cannot DELETE operator" << std::endl;
-									}
-								}
-								break ;
-							}
-						}
-					}
-				}
-				return;  // Quitter la fonction après traitement d'un canal
-			}
-		}
-		++it;
-	}
-}

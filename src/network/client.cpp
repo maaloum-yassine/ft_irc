@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 20:12:14 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/10 23:41:41 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 07:24:08 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void    client::addNickname(std::string const& nickname)
 		_nicknameB = 1;
 		if (_usernameB == 1)
 		{
-			std :: cout << "||||||" << std :: endl;
 			_connected = 1;
 			std::cout << _username << std::endl;
 		}
