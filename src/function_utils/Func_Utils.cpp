@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 04:07:18 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/12 00:44:35 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 01:50:13 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,27 +203,27 @@
 	}
 
 
-	// bool limitNumber(const std::string& str)
-	// {
-	// 	int	i;
+	bool limitNumber(const std::string& str)
+	{
+		int	i;
 
-	// 	i = 0;
-	// 	while(str[i])
-	// 	{
-	// 		if(!(str[i] >= '0'  && str[i] <= '9'))
-	// 			return 0;
-	// 		else
-	// 			 std::cout<< "number" <<std::endl;
-	// 			return 1;
-	// 		i++;
-	// 	}
-	// 	return 1;
-	// }
+		i = 0;
+		while(str[i])
+		{
+			if(!(str[i] >= '0'  && str[i] <= '9'))
+				return 0;
+			else
+				 std::cout<< "number" <<std::endl;
+				return 1;
+			i++;
+		}
+		return 1;
+	}
 
 
-	// bool	check_arg(const char c)
-	// {
-	// 	if(!(c == 't' || c == 'i' || c == 'k' ||  c == 'o' || c == 'l' || c == '+' || c == '-' ))
-	// 	return (1);
-	// 		return (0);
-	// }
+	bool	check_arg(const char c)
+	{
+		if(!(c == 't' || c == 'i' || c == 'k' ||  c == 'o' || c == 'l' || c == '+' || c == '-' ))
+		return (1);
+			return (0);
+	}

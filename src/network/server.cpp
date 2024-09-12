@@ -875,8 +875,6 @@ char		server::memberChannelNumbers(const std::string& name)
 		}
 	}
 
-
-
 	/*********************************************************************************/
 
 	void	server::execute_cmd(int fd,const std :: vector<std::string>& split_cmd , int index_cmd, const std::string & commandLine)
@@ -923,7 +921,7 @@ char		server::memberChannelNumbers(const std::string& name)
 					break ;
 			case 9:
 					if (this->_client[fd]->_connected)
-						mode();
+						// mode();
 					break ;
 
 			case 10:
