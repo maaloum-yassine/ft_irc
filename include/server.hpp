@@ -6,7 +6,7 @@
 /*   By: ymaaloum <ymaaloum@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/05 02:34:37 by ymaaloum          #+#    #+#             */
-/*   Updated: 2024/09/12 08:47:07 by ymaaloum         ###   ########.fr       */
+/*   Updated: 2024/09/12 10:14:00 by ymaaloum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,60 +66,77 @@ enum EnumName
 
 class server
 {
+private:
+	std::map<int, client*>       _client;            // Map pour stocker les clients connectés avec leur socket.
+	std::vector<struct pollfd>   _fds;               // Vecteur pour les structures pollfd pour la gestion des événements.
+	Parse                        _parse;             // Objet pour analyser les commandes des clients.
+	const std::string            _port;              // Port sur lequel le serveur écoute.
+	const std::string            _password;          // Mot de passe du serveur.
+	int                          _serv_socket_fd;    // Descripteur de socket du serveur.
 
-	std::map<int, client*>		_client;
-	std::vector<struct pollfd>	_fds;
-	Parse						_parse;
-	const std :: string 		_port;
-	const std :: string 		_password;
-	int							_serv_socket_fd;
+public:
+	server(const std::string &, const std::string &);
+	void display_err(const std::string &, bool) const;
+	~server();
 
-	public :
-		server(const std::string &,const std::string &);
-		void	display_err(const std ::string &, bool )const;
-		~server();
-	private :
-		void		start_server();
-		void		create_socket();
-		void		handle_cnx_client();
-		void		handle_msg_client(size_t &);
-		void		commandApply(int , std::vector<std::string>&);
-		void		execute_cmd(int ,const std :: vector<std::string>& , int, const std::string&);
-		bool		alreadyUsedNickname(const std::string& );
-		void		brodcast(const std::string &, const std::string &, int fd);
-		bool		availableChannel(const std::string &);
-		void		prive_msg(client* , const std :: vector<std::string>&, const std::string &, int );
-		bool 		channelMember(const std::string&, int );
-		int			searchForid(const std::string&);
-		char		modeChannel(const std::string&);
-		void		join(const std :: vector<std::string>& , int);
-		int			idChannelfd(const std::string&, int &);
-		char		memberChannelNumbers(const std::string&);
-		bool		checkInvitedPersonnes(const std::string &, int, int );
-		void		updateclients(const std::string & , int fd);
-		std::string	clientChannels(const std::string&);
-		void		displayTopic(std::string const& , std::string const&);
-		std::string	topicName(const std::string& );
-		void		topic(int, const std :: vector<std::string>& , const std:: string&);
-		int			find_channel_id(const std::string&, int);
-		bool		topicMode(const std::string&, int);
-		bool 		on_channel(const std::string&, int);
-		bool 		operator_user(const std::string &, int );
-		void		updateChannelTopic(const std::string &, const std::string&);
-		void		kick(int, const std :: vector<std::string>& , const std:: string& );
-		void		kickUser(int, int,const std::string&,const std::string &);
-		std::string	reason(const std::string&, int );
-		void		invite(int, const std :: vector<std::string>&);
-		void 		inserUser(const std::string& ,const  std::string &);
-		void		part(int, const std :: vector<std::string>& );
-		void		kickclients(const std::string& , int);
-		void		mode(int fd, const std :: vector<std::string>&);
-		int			idChannel(const std::string&, int&);
-		void		updateMode(const std::string& , int , char,const std::string&);
-		void		brodcastMode (const std::string&,const std::string &, int,const std::vector<std::string>& );
-		void		applicateMode(char mode, std::string,int fd, char,std::vector<std::string>);
+private:
+	// Gestion du serveur
+	// Fonctions pour démarrer le serveur, créer des sockets et gérer les connexions client.
+	void start_server();
+	void create_socket();
+	void handle_cnx_client();
+	void handle_msg_client(size_t &);
+	// Gestion des commandes IRC
+	// Fonctions pour appliquer et exécuter les commandes IRC.
+	void commandApply(int, std::vector<std::string>&);
+	void execute_cmd(int, const std::vector<std::string>&, int, const std::string&);
+	// Gestion des utilisateurs
+	// Fonctions pour gérer les utilisateurs, y compris les vérifications de surnoms, l'invitation et la gestion des mots de passe.
+	bool alreadyUsedNickname(const std::string&);
+	void invite(int, const std::vector<std::string>&);
+
+	// Gestion des canaux
+	// Fonctions pour gérer les canaux IRC, y compris l'adhésion, les modes, les topics et les expulsions.
+	bool availableChannel(const std::string&);
+	void join(const std::vector<std::string>&, int);
+	void part(int, const std::vector<std::string>&);
+	void kick(int, const std::vector<std::string>&, const std::string&);
+	void kickUser(int, int, const std::string&, const std::string&);
+	void kickclients(const std::string&, int);
+	bool on_channel(const std::string&, int);
+	bool operator_user(const std::string&, int);
+	bool channelMember(const std::string&, int);
+	int find_channel_id(const std::string&, int);
+	char modeChannel(const std::string&);
+	void mode(int fd, const std::vector<std::string>&);
+	void updateMode(const std::string&, int, char, const std::string&);
+	void brodcastMode(const std::string&, const std::string&, int, const std::vector<std::string>&);
+	void applicateMode(char mode, std::string, int fd, char, std::vector<std::string>);
+
+	// Gestion des messages
+	// Fonctions pour envoyer des messages privés et diffuser des messages à plusieurs clients.
+	void brodcast(const std::string&, const std::string&, int fd);
+	void prive_msg(client*, const std::vector<std::string>&, const std::string&, int);
+
+	// Fonctions utilitaires
+	// Fonctions diverses pour gérer les détails des utilisateurs et des canaux.
+	int searchForid(const std::string&);
+	int idChannelfd(const std::string&, int&);
+	std::string clientChannels(const std::string&);
+	void displayTopic(std::string const&, std::string const&);
+	std::string topicName(const std::string&);
+	void topic(int, const std::vector<std::string>&, const std::string&);
+	void updateChannelTopic(const std::string&, const std::string&);
+	bool topicMode(const std::string&, int);
+	char memberChannelNumbers(const std::string&);
+	bool checkInvitedPersonnes(const std::string&, int, int);
+	void updateclients(const std::string&, int fd);
+	int idChannel(const std::string&, int&);
+	std::string reason(const std::string&, int);
+	void inserUser(const std::string&, const std::string&);
 };
 
-#endif
-
-
+#endif // SERVER_HPP
+	void nick(client*, const std::string&, int);
+	void user(client*, const std::string&, int);
+	void check_password(client*, const std::string&, const std::string&, int);
